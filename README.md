@@ -1,13 +1,27 @@
-Please complete all your project development in this directory and 
-its subdirectories (which you may create as neeeded).
+Installation Guide:
 
-Our website
-http://mapgether.us-east-1.elasticbeanstalk.com/
+Install all necessary python packages.
+`pip install -r requirements.txt`
 
-We aim to integrated Map and Activities information to give users a clean, concise, and easy-to-use website for navigate their schedule
+Make sure postgresql is installed.
+`service postgresql status`
 
-The activities can be categorized as social-based and location-based events
-- social-based: user can easily share events and interact with their friends
-- location-based: MapGather will provide useful information in your nearby area
+Fill out the postgresql IP and port in webapps/settings.py on line 112 and 113.
+`'HOSY'  : 'localhost'`
+`'PORT'  : '5433' // depends on the postgresql server`
 
-You can create/edit events, join/withdraw an event, search event by tags/titles, and upload your icalandar, leave comments under events, and so on.
+Add current IP to ALLOWED_HOSTS in webapps/settings.py
+`ALLOWED_HOSTED = [ 'your ip' ]`
+
+Setup user and database in postgresql: 
+`sudo su - postgres`
+`psql`
+`CREATE USER mapuser`
+`CREATE DATABASE mapgether`
+
+Create Migrations for database
+`python manage.py makemigrations mapgether`
+`python manage.py migrate`
+
+Finally, we can run the server now (Note: specify IP and port)
+`python manage.py runserver 123.234.123.234:8000`  

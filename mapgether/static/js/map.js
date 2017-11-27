@@ -1,6 +1,7 @@
-    var currentMap;
+var currentMap;
 var markers = [];
 var debug_info;
+var tag_history = [];
 
 function populate() { 
     getUpdates();
@@ -334,19 +335,19 @@ function zoomout(e){
   $("#dialog-form").dialog("open");
 }
 
-function tagEventMap(name) {
-  newMap('/mapgether/new-tag-event-map/' + name);
+function tagEventMap(name, prefix) {
+  newMap('/mapgether/new-tag-event-map/' + name, prefix);
 }
 
 function specificEventMap(name) {
-  newMap('/mapgether/new-specific-event-map/' + name);
+  newMap('/mapgether/new-specific-event-map/' + name, "");
 }
 
 function allEventMap() {
-  newMap('/mapgether/new-map');
+  newMap('/mapgether/new-map', "");
 }
 
-function newMap(url) {
+function newMap(url, prefix) {
   $.get(url)
   .done(function(data) {
     data = JSON.parse(data);
@@ -363,9 +364,10 @@ function newMap(url) {
     data['events'] = JSON.parse(data['events'])
     // for each event, create marker and show event info
     // clear event
-    $("#events").empty()
+    //$("#events").empty()
     for (var event in data['events']) {
       var e = data['events'][event]['fields'];
+      e.title = prefix + e.title;
       var position = {lat: parseFloat(e['latitude']), lng: parseFloat(e['longitude'])}
 
       // Set center at the first event's location.
@@ -419,8 +421,22 @@ function run_search(event) {
   event.preventDefault();
   prefix = $('#search_box').val()[0];
   name = $('#search_box').val().slice(1);
+  //clear all events
+  $("#events").empty()
   if (prefix == '#') {
-    tagEventMap(name);
+    tagEventMap(name, "");
+    
+    for(let i = 0; i < tag_history.length; i++) {
+      if(tag_history[i] != name)
+        tagEventMap(tag_history[i], "[RECOMMND] ");
+    }
+    // add name to tag_history
+    if((tag_history.length == 2 &&tag_history[1] != name) || tag_history.length == 0
+       || (tag_history.length == 1 && tag_history[0] != name))
+      tag_history.push(name);
+    if(tag_history.length > 2) {
+      tag_history.shift();
+    }
   } else if (prefix == '@') { // redirect to user profile
     window.location.replace("/mapgether/linkProfile/" + name);
   } else if (prefix == '~') {
@@ -432,7 +448,7 @@ function run_search(event) {
 
 function tag_event(event) {
   event.preventDefault();
-  tagEventMap(this.id);
+  tagEventMap(this.id, "");
 }
 
 function getUpdates() {
