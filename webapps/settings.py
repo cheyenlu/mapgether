@@ -26,7 +26,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['mapgether.us-east-1.elasticbeanstalk.com', '127.0.0.1', 'localhost', 'mmlslave.ddns.net']
+ALLOWED_HOSTS = ['mapgether.us-east-1.elasticbeanstalk.com', '127.0.0.1', 'localhost', 'mmlslave.ddns.net', 'homecuisine.com.tw']
 
 
 # Application definition
@@ -110,7 +110,7 @@ else:
             'USER': 'mapuser',
             'PASSWORD': '',
             'HOST': 'localhost',    # Empty for localhost through domain sockets or           '127.0.0.1' for localhost through TCP.
-            'PORT': '',             # Set to empty string for default.
+            'PORT': '5433',             # Set to empty string for default.
         }
     }
 
