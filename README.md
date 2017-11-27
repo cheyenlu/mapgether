@@ -5,6 +5,11 @@ Install all necessary python packages.
 >> pip install -r requirements.txt
 ```
 
+Add google API KEY to environment
+```
+>> source envs.sh
+```
+
 Make sure postgresql is installed.
 ```
 >> service postgresql status
@@ -35,7 +40,7 @@ Create Migrations for database
 >> python manage.py migrate
 ```
 
-Finally, we can run the server now (Note: specify IP and port)
+Finally, we can run the server now (Note: specify IP and port after runserver)
 ```
 >> python manage.py runserver 123.234.123.234:8000
 ```
