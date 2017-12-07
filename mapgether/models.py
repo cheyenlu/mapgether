@@ -19,6 +19,7 @@ class Event(models.Model):
     end_time = models.CharField(max_length = 150, blank = False)
     address = models.CharField(max_length=200, blank=False)
     description = models.CharField(max_length=1000, blank=False)
+    like_number = models.IntegerField(default=0)
 
     owner = models.ForeignKey(User)
     tags = models.ManyToManyField(Tag, blank=True)

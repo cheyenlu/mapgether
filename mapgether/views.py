@@ -299,6 +299,7 @@ def form_validate(request, event_form):
 
     if(geo_result["latitude"] is None):
         errors = "The address can't be found in GoogleMap. Please correct it"
+        print(errors)
         return None, errors
         #return render(request, 'mapgether/event.html', context)
 
@@ -373,9 +374,9 @@ def create_event(request):
     #validation fail
     if event_form == None:
 
+        #print(trans_data)
         if type(trans_data) is str:
             context['errors'] = trans_data
-            #print(trans_data)
         else:
             context['form'] = trans_data
         return render(request, 'mapgether/event.html', context)
@@ -388,9 +389,19 @@ def create_event(request):
                              longitude=trans_data['longitude'],
                              address=escape(event_form.cleaned_data['address']),
                              description=escape(event_form.cleaned_data['description']),
+                             like_number=0,
                              owner=request.user,
                              privacy=event_form.cleaned_data['privacy'])
     save_event(event_form, e)
+
+    return redirect(reverse('home'), username = request.user)
+
+def like_event(request, id):
+
+    username = request.user
+    event_to_edit = get_object_or_404(Event, owner=request.user, id=id)
+    event_to_edit.like_number = event_to_edit.like_number + 1
+    event_to_edit.save()
 
     return redirect(reverse('home'), username = request.user)
 

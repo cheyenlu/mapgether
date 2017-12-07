@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^get-attenduser/', mapgether.views.get_attenduser),
 
     url(r'^create-event$', mapgether.views.create_event, name='create_event'),
+    url(r'^like-event/(?P<id>\d+)$', mapgether.views.like_event, name='like_event'),
     url(r'^edit-event/(?P<id>\d+)$', mapgether.views.edit_event, name='edit_event'),
     url(r'^edit-profile$', mapgether.views.editprofile, name='edit_profile'),
     url(r'^photo/(?P<id>\d+)$', mapgether.views.get_photo, name='user_photo'),

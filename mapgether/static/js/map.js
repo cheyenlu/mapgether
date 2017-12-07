@@ -11,8 +11,11 @@ function showEventHTML(pk, fields, detail, lat, longt, isOwner=false, isAttendin
   var html = "";
   html += "<div class='row eventloc' id='" + pk + "' data-lat='" + lat + "' data-longt='" + longt + "'>";
   //html += '  <input class="input-control2" type="text" name="title" value="' + fields.title + '" readonly="readonly">';
-  html += "<div class='col-md-10'>";
-  html += "<h3 class='plan-title'>" + fields.title + "</h3>";
+  html += "<div class='col-md-8'>";
+  html += "<h3 class='plan-title'>" + fields.title +  "</h3>";
+  html += "</div>";
+  html += "<div class='col-md-2'>";
+  html += "<h2 class='plan-title'>" + fields.like_number +  "</h2>";
   html += "</div>";
 
   if(detail) {
@@ -21,13 +24,18 @@ function showEventHTML(pk, fields, detail, lat, longt, isOwner=false, isAttendin
     html += '  <i class="fa fa-search-plus fa-2x" aria-hidden="true"></i>';
     html += '</button>';
     html += "</div>";
+    html += "<div class='col-md-2'>";
+    html += '<button class="btn btn-block btn-primary" data-index="' + pk + '">';
+    html += '<i class="fa fa-thumps-up">Like</i>';
+    html += '</button>';
+    html += "</div>";
   }
 
   html += '<ul class="plan-features">';
   html += '<li class="plan-feature">Time: <span name="startTime" class="plan-feature-name">' + fields.start_time + '</span></li>';
   html += '<li class="plan-feature">Location: <span name="addr" class="plan-feature-name">' + fields.address + '</span></li>';
   html += '</ul>';
-  html += "</div>";
+
   html += "</div>";
 
   return html;
@@ -117,6 +125,10 @@ function zoomout(e){
   var id = $(this).data("index");
   var lat = $(this).data("lat");
   var longt = $(this).data("longt");
+  if ($(this).data("lat") == undefined){
+    window.location.href='/mapgether/like-event/' + id;
+    return ;
+  }
   // if click on the icon, data is in parent().parent()
   var parent = $(e.target).parent();
   if (!!!parent.data("title")) {
@@ -365,20 +377,32 @@ function newMap(url, prefix) {
     // for each event, create marker and show event info
     // clear event
     //$("#events").empty()
+    events = [];
     for (var event in data['events']) {
-      var e = data['events'][event]['fields'];
+        data['events'][event]['fields']['event_id'] = data['events'][event]['pk'];
+        events.push(data['events'][event]['fields']);
+    }
+    events.sort(function(e1, e2){
+      if(e1['like_number'] > e2['like_number']) return -1;
+      else if(e1['like_number'] < e2['like_number']) return 1;
+      else return 0;
+    } );
+    //$("#events").append("<div>"+ events[0]['like_number'] + "</div>");
+    //data['events']
+    for (let i = 0; i < events.length; i++) {
+      var e = events[i];
       e.title = prefix + e.title;
       var position = {lat: parseFloat(e['latitude']), lng: parseFloat(e['longitude'])}
 
       // Set center at the first event's location.
-      if (event == 0) {
+      if (i == 0) {
         map.setCenter(position);
       }
 
       var marker = new google.maps.Marker({
         position: position,
         map: map,
-        id: data['events'][event]['pk']
+        id: e['event_id']
       });
       markers.push(marker);
 
@@ -390,7 +414,7 @@ function newMap(url, prefix) {
       var isAttending = e['attenduser'].indexOf(currentUserId) != -1;
 
       // add event
-      $("#events").append(showEventHTML(data['events'][event]['pk'], e, flag, e['latitude'], e['longitude'], isOwner, isAttending, currentUserId, currentUserName));
+      $("#events").append(showEventHTML(e['event_id'], e, flag, e['latitude'], e['longitude'], isOwner, isAttending, currentUserId, currentUserName));
 
       // marker.onclick
       marker.addListener('click', function() {
@@ -505,6 +529,7 @@ $(document).ready(function () {
   });
 
   $("#events").on('click', 'button.btn', zoomout);
+  //$("#like_button").on('click', 'button.btn', zoomout);
   $("#run_search").on('click', run_search);
   $(".usertags").on('click', tag_event);
   window.setInterval(getUpdates, 5000);

@@ -158,11 +158,14 @@ if 'RDS_DB_NAME' in os.environ:
 
     AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 
+    PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+    STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
     STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
 
     STATICFILES_LOCATION = 'static'
     STATICFILES_STORAGE = 'custom_storages.StaticStorage'
     STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, STATICFILES_LOCATION)
+
 
     # For media file
     MEDIAFILES_LOCATION = 'media'
@@ -171,6 +174,8 @@ if 'RDS_DB_NAME' in os.environ:
 
 else:
 
+    PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+    STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
     # Absolue filesystem path to the directory that will hold user-uploaded file
     MEDIA_ROOT = BASE_DIR + '/media/'
 
